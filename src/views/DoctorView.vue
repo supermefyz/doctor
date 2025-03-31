@@ -1,4 +1,7 @@
 <script setup>
+import { NQrCode } from 'naive-ui'
+import { ref } from 'vue'
+const url=ref('https://baidu.com') 
 </script>
 <template>
 <div class="content">
@@ -9,6 +12,7 @@
       @click-left="$router.back()"
       title="医生"
     />
+    <n-qr-code :value="url" />
     </div>
 </div>
 </template>

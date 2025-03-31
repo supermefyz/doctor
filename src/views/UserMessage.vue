@@ -3,7 +3,9 @@ import { useUserMessageStore } from "@/stores/UserMessage";
 import router from "@/router";
 import { ref } from "vue";
 import { showConfirmDialog } from 'vant';
-
+import config from "@/assets/json/config.json";
+import axios from "axios";
+import { Form } from "vant";
 const user = useUserMessageStore();
 const loadings = ref(false);
 const showPicker = ref(false);
@@ -35,8 +37,30 @@ const onSubmit = () => {
   user.putValue(form.value)
   let timer = setTimeout(() => {
     loadings.value = false;
-      router.push("/chat");
     clearTimeout(timer);
+    router.push("/chat");
+    // axios({
+    //   url: `${config.url}/submit_user_info`,
+    //   method: "post",
+    //   data: form.value,
+    // }).then((res) => {
+    //   if (res.data.code === 200) {
+    //     console.log("提交成功");
+    //     console.log(res.data.data);
+    //     router.push("/chat");
+    //   } else {
+    //     showConfirmDialog({
+    //       title: '提交失败',
+    //       message: '信息提交失败，请稍后再试',
+    //     });
+    //   }
+    // }).catch(() => {
+    //   showConfirmDialog({
+    //     title: '提交失败',
+    //     message: '信息提交失败，请稍后再试',
+    //   });
+    // });
+    
   }, 500);
 };
 const onReset = () => showConfirmDialog({
@@ -154,6 +178,10 @@ const onReset = () => showConfirmDialog({
   </div>
 </template>
 <style scoped>
+.content {
+    max-width: 800px; /* 限制最大宽度，适应手机屏幕 */
+  margin: 0 auto; /* 水平居中 */
+}
 .form {
   background-color: aliceblue;
   padding: 20px;
