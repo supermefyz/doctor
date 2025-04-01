@@ -1,55 +1,66 @@
 <script setup>
-import { ref,onMounted } from 'vue'
-import config from '@/assets/json/config.json'
-import axios from 'axios'
+import { ref, onMounted } from "vue";
+import config from "@/assets/json/config.json";
+import axios from "axios";
+import { showFailToast } from "vant";
+import { useUserMessageStore } from "@/stores/UserMessage";
 
+const user = useUserMessageStore();
 // 聊天消息数组
 const chatMessages = ref([]);
 // 用户输入的消息
-const inputMessage = ref('');
+const inputMessage = ref("");
 const isLoading = ref(false);
-const userAvatar = new URL('@/assets/img/User.png', import.meta.url).href;
-const doctorAvatar = new URL('@/assets/img/Doctor.png', import.meta.url).href;
+const userAvatar = new URL("@/assets/img/User.png", import.meta.url).href;
+const doctorAvatar = new URL("@/assets/img/Doctor.png", import.meta.url).href;
 onMounted(() => {
   // 加载聊天记录
   chatMessages.value.push({
-            isUser: false,
-            content: "我是你的AI医生，有什么可以帮助你吗？"
-        });
+    isUser: false,
+    content: "我是你的AI医生，有什么可以帮助你吗？",
+  });
 });
 const sendMessage = async () => {
-    if (inputMessage.value.trim()) {
-        // 添加用户消息到聊天记录
-        chatMessages.value.push({
-            isUser: true,
-            content: inputMessage.value
-        });
-        inputMessage.value = '';
-
-        try {
-            isLoading.value = true; // 显示加载指示器
-            // 调用后端接口获取 AI 回复
-            const response = await axios.post(`${config.url}/api/chat`, {
-                message: inputMessage.value
-            });
-
-            isLoading.value = false; // 隐藏加载指示器
-
-            if (response.data.choices && response.data.choices.length > 0) {
-                // 添加 AI 回复到聊天记录
-                const aiMessage = {
-                    isUser: false,
-                    content: response.data.choices[0].message.content
-                };
-                chatMessages.value.push(aiMessage);
-            } else {
-                throw new Error('无效的AI响应');
-            }
-        } catch (error) {
-            isLoading.value = false; // 隐藏加载指示器
-            console.error('发生错误:', error);
-        }
-    }
+  if (inputMessage.value.trim()) {
+    // 添加用户消息到聊天记录
+    chatMessages.value.push({
+      isUser: true,
+      content: inputMessage.value,
+    });
+    let temp = inputMessage.value;
+    inputMessage.value = "";
+    console.log(temp);
+    axios.defaults.withCredentials = true;
+    axios({
+      url: `${config.url}/api/chat`,
+      method: "post",
+      data: {
+        message: temp
+      },
+    }).then(res => {
+      console.log(res);
+      isLoading.value = false; // 隐藏加载指示器
+      if (res.data.choices && res.data.choices.length > 0) {
+        // 添加 AI 回复到聊天记录
+        const aiMessage = {
+          isUser: false,
+          content: res.data.choices[0].message.content,
+        };
+        chatMessages.value.push(aiMessage);
+      } else {
+        console.error(res);
+      }
+    }).catch(error => {
+      isLoading.value = false; // 隐藏加载指示器
+      console.error("发生错误:", error.message);
+      showFailToast(error.message);
+      const errorMessage = {
+        isUser: false,
+        content: "系统或网络错误，请稍后再试。",
+      };
+      chatMessages.value.push(errorMessage);
+    });
+  }
 };
 </script>
 <template>
@@ -63,18 +74,25 @@ const sendMessage = async () => {
     />
     <!-- 聊天记录展示区域 -->
     <div class="chat-history">
-      <div v-for="(message, index) in chatMessages" :key="index" class="chat-message">
-        <div :class="[message.isUser ? 'user-message' : 'ai-message']">
-          <img
-            :src="message.isUser ? userAvatar : doctorAvatar"
-            alt="Avatar"
-            class="avatar"
-          />
+      <div
+        v-for="(message, index) in chatMessages"
+        :key="index"
+        class="chat-message"
+      >
+        <div class="ai-message" v-if="!message.isUser">
+          <img :src="doctorAvatar" alt="Avatar" class="avatar" />
           <div class="message-bubble">
             <p class="message-content">{{ message.content }}</p>
+          </div>
         </div>
+        <div class="user-message" v-else>
+          <div class="message-bubble">
+            <p class="message-content">{{ message.content }}</p>
+          </div>
+          <img :src="userAvatar" alt="Avatar" class="avatar" />
         </div>
       </div>
+      <van-loading size="24px" v-show="isLoading">回复加载中...</van-loading>
     </div>
     <!-- 输入框和发送按钮 -->
     <div class="input-area">
@@ -82,13 +100,16 @@ const sendMessage = async () => {
         v-model="inputMessage"
         placeholder="请输入你要发送的消息"
         @keydown.enter="sendMessage"
-        style="width: 90%;"
+        style="width: 90%"
       />
-      <van-button type="primary" @click="sendMessage" style="min-width: 1rem;white-space: nowrap;">发送</van-button>
+      <van-button
+        type="primary"
+        @click="sendMessage"
+        style="min-width: 1rem; white-space: nowrap"
+      >发送</van-button>
     </div>
   </div>
 </template>
-
 
 <style scoped>
 /* 整体容器样式 */
@@ -115,12 +136,14 @@ const sendMessage = async () => {
   display: flex;
   margin-bottom: 10px;
   align-items: flex-start;
+  width: 100%; /* 确保每条消息占满宽度 */
 }
 
 /* 用户消息样式 */
 .user-message {
   justify-content: flex-end;
   flex-direction: row-reverse;
+  margin-left: auto; /* 确保用户消息靠右 */
 }
 
 /* AI 消息样式 */
@@ -140,21 +163,24 @@ const sendMessage = async () => {
 .message-bubble {
   padding: 8px 12px;
   border-radius: 10px;
-  max-width: 70%;
+  min-width: 1rem; /* 设置最小宽度 */
+  max-width: 17rem; /* 设置最大宽度 */
   position: relative;
   display: inline-block;
-  word-wrap: break-word; /* 允许长单词换行 */
+  white-space: pre-wrap; /* 允许换行 */
+  overflow: hidden; /* 隐藏溢出内容 */
+  text-overflow: ellipsis; /* 溢出内容用省略号表示 */
 }
 
 /* 用户消息气泡样式 */
 .user-message .message-bubble {
-  background-color: #DCF8C6;
+  background-color: #dcf8c6;
   margin-left: 5px;
 }
 
 /* AI 消息气泡样式 */
 .ai-message .message-bubble {
-  background-color: #E5E5EA;
+  background-color: #e5e5ea;
   margin-right: 5px;
 }
 

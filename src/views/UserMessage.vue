@@ -5,7 +5,6 @@ import { ref } from "vue";
 import { showConfirmDialog } from 'vant';
 import config from "@/assets/json/config.json";
 import axios from "axios";
-import { Form } from "vant";
 const user = useUserMessageStore();
 const loadings = ref(false);
 const showPicker = ref(false);
@@ -35,33 +34,32 @@ const onConfirm = ({ selectedOptions }) => {
 const onSubmit = () => {
   loadings.value = true;
   user.putValue(form.value)
-  let timer = setTimeout(() => {
-    loadings.value = false;
-    clearTimeout(timer);
-    router.push("/chat");
-    // axios({
-    //   url: `${config.url}/submit_user_info`,
-    //   method: "post",
-    //   data: form.value,
-    // }).then((res) => {
-    //   if (res.data.code === 200) {
-    //     console.log("提交成功");
-    //     console.log(res.data.data);
-    //     router.push("/chat");
-    //   } else {
-    //     showConfirmDialog({
-    //       title: '提交失败',
-    //       message: '信息提交失败，请稍后再试',
-    //     });
-    //   }
-    // }).catch(() => {
-    //   showConfirmDialog({
-    //     title: '提交失败',
-    //     message: '信息提交失败，请稍后再试',
-    //   });
-    // });
-    
-  }, 500);
+  axios.defaults.withCredentials = true;
+    axios({
+      url: `${config.url}/api/submit_user_info`,
+      method: "post",
+      data: form.value,
+    }).then((res) => {
+      console.log(res);
+      if (res.status === 200) {
+        console.log("提交成功");
+        console.log(res.data);
+        loadings.value = false;
+        router.push("/chat");
+      } else {
+        showConfirmDialog({
+          title: '提交失败',
+          message: '信息提交失败，请稍后再试',
+        });
+        loadings.value = false;
+      }
+    }).catch((err) => {
+      showConfirmDialog({
+        title: '提交失败',
+        message: err.message,
+      });
+      loadings.value = false;
+    });
 };
 const onReset = () => showConfirmDialog({
   title: '确认清空信息？',
@@ -163,7 +161,7 @@ const onReset = () => showConfirmDialog({
       </van-form>
       <van-button 
       type="primary" 
-      round  
+      :round="true"  
       @click="onReset"
       style="margin-top: 20px;width: 100%;"
         >重置信息</van-button

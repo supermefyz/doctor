@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { Button, Form, Field, Cell, NavBar, Popup,Picker, SubmitBar } from 'vant'
+import { Button, Form, Field, Cell, NavBar, Popup, Picker, SubmitBar, Loading, Toast } from 'vant'
 import App from './App.vue'
 import router from './router'
 import 'vant/lib/index.css'
@@ -16,6 +16,7 @@ app.use(Button)
     .use(Popup)
     .use(Picker)
     .use(SubmitBar)
-    
+    .use(Loading)
+    .use(Toast)
 
 app.mount('#app')
