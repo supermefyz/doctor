@@ -1,11 +1,10 @@
 <script setup>
-import { useUserMessageStore } from "@/stores/UserMessage";
-import router from "@/router";
 import { ref } from "vue";
 import { showConfirmDialog } from 'vant';
 import config from "@/assets/json/config.json";
 import axios from "axios";
-const user = useUserMessageStore();
+import { useRouter } from "vue-router";
+const router = useRouter();
 const loadings = ref(false);
 const showPicker = ref(false);
 const form = ref({
@@ -32,18 +31,23 @@ const onConfirm = ({ selectedOptions }) => {
   showPicker.value = false;
 };
 const onSubmit = () => {
+  if(!form.value.name ||!form.value.age ||!form.value.gender ||!form.value.height ||!form.value.weight ||!form.value.phone ||!form.value.medicalHistory){
+    showConfirmDialog({
+      title: '信息填写不完整',
+      message: '请填写完整信息',
+    });
+    return;
+  }
   loadings.value = true;
-  user.putValue(form.value)
   axios.defaults.withCredentials = true;
     axios({
       url: `${config.url}/api/submit_user_info`,
       method: "post",
       data: form.value,
+      withCredentials: true
     }).then((res) => {
-      console.log(res);
       if (res.status === 200) {
-        console.log("提交成功");
-        console.log(res.data);
+        console.log(res.data.message);
         loadings.value = false;
         router.push("/chat");
       } else {
@@ -67,8 +71,7 @@ const onReset = () => showConfirmDialog({
     '如果清空信息，则需要重新填写信息，确定要清空吗？',
 })
   .then(() => {
-      // on confirm
-      user.clearValue();
+
       form.value = {
         name: "",
         age: "",
@@ -98,7 +101,7 @@ const onReset = () => showConfirmDialog({
             label="姓名"
             placeholder="姓名"
             :rules="[{ required: true, message: '请填写姓名' }]"
-            required="true"
+            :required="true"
           />
           <van-field
             v-model="form.age"
@@ -126,14 +129,14 @@ const onReset = () => showConfirmDialog({
           <van-field
             v-model="form.height"
             name="身高"
-            label="身高"
+            label="身高(cm)"
             placeholder="身高"
             :rules="[{ required: true, message: '请填写身高' }]"
           />
           <van-field
             v-model="form.weight"
             name="体重"
-            label="体重"
+            label="体重(kg)"
             placeholder="体重"
             :rules="[{ required: true, message: '请填写体重' }]"
           />

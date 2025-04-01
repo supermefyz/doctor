@@ -1,13 +1,15 @@
 <script setup>
-import {  NDescriptions, NDescriptionsItem } from "naive-ui";
-import { ref ,onMounted} from "vue";
+import { NQrCode,NDescriptions, NDescriptionsItem } from "naive-ui";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+const route = useRoute();
 import axios from "axios";
 import config from "@/assets/json/config.json";
-import {useRouter} from 'vue-router'
-const router = useRouter();
-const id = router.currentRoute.value.query.id;
 
+const id = route.query.id;
+const url = `${config.localhost}/doctor?id=${id}`
 onMounted(() => {
+console.log(id);
   axios({
     url: `${config.url}/api/get_record_by_id`,
     method: "get",
@@ -45,19 +47,15 @@ const message = ref({
       <n-descriptions-item label="病史" :span="2">{{
         message.medical_history
       }}</n-descriptions-item>
-      <n-descriptions-item label="诊断结果" :span="4">{{
-        message.diagnosis
-      }}</n-descriptions-item>
-      <n-descriptions-item label="诊断建议" :span="4" >
+      <n-descriptions-item label="推荐科室和医生" :span="4" >
         <p>{{
-        message.suggestion
+        message.recommendation
       }}</p></n-descriptions-item>
     </n-descriptions>
     <div class="time">
       {{ message.time }}
     </div>
-    
-    
+    <center><n-qr-code :value="url" /></center>
   </div>
 </template>
 <style scoped>

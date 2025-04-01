@@ -8,7 +8,7 @@
         </div>
         <div class="button-container">
             <van-button type="primary" to="/userMessage">病人入口</van-button>
-            <van-button plain hairline type="success" to="/doctor">医生入口</van-button>
+            <van-button plain hairline type="success" to="/doctorSearch">医生入口</van-button>
         </div>
     </div>
 </template>

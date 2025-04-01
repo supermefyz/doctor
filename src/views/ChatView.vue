@@ -1,16 +1,16 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch, nextTick } from "vue";
 import config from "@/assets/json/config.json";
 import axios from "axios";
 import { showFailToast } from "vant";
-import { useUserMessageStore } from "@/stores/UserMessage";
-
-const user = useUserMessageStore();
+import { useRouter } from "vue-router";
+const router = useRouter();
 // 聊天消息数组
 const chatMessages = ref([]);
 // 用户输入的消息
 const inputMessage = ref("");
 const isLoading = ref(false);
+const scrollContainer = ref(null); // 容器引用
 const userAvatar = new URL("@/assets/img/User.png", import.meta.url).href;
 const doctorAvatar = new URL("@/assets/img/Doctor.png", import.meta.url).href;
 onMounted(() => {
@@ -21,6 +21,7 @@ onMounted(() => {
   });
 });
 const sendMessage = async () => {
+  isLoading.value = true; // 显示加载指示器
   if (inputMessage.value.trim()) {
     // 添加用户消息到聊天记录
     chatMessages.value.push({
@@ -34,6 +35,7 @@ const sendMessage = async () => {
     axios({
       url: `${config.url}/api/chat`,
       method: "post",
+      withCredentials: true,
       data: {
         message: temp
       },
@@ -46,9 +48,14 @@ const sendMessage = async () => {
           isUser: false,
           content: res.data.choices[0].message.content,
         };
-        chatMessages.value.push(aiMessage);
+        if (res.data.choices[0].isOver) {
+          console.log(res.data.choices[0].id);
+          router.push({path:'/patient',query:{id:res.data.choices[0].id}})
+        } else {
+          chatMessages.value.push(aiMessage);
+        }
       } else {
-        console.error(res);
+        console.error(res.error);
       }
     }).catch(error => {
       isLoading.value = false; // 隐藏加载指示器
@@ -62,6 +69,21 @@ const sendMessage = async () => {
     });
   }
 };
+// 滚动到底部的函数
+const scrollToBottom = () => {
+  if (!scrollContainer.value) return;
+  scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
+};
+
+// 监听 messages 变化（深度监听）
+watch(
+  () => [...chatMessages.value], // 确保数组变化被捕获
+  () => nextTick(scrollToBottom),
+  { deep: true }
+);
+
+// 初始化时滚动到底部
+onMounted(scrollToBottom);
 </script>
 <template>
   <div class="chat-container">
@@ -73,7 +95,7 @@ const sendMessage = async () => {
       title="AIChat"
     />
     <!-- 聊天记录展示区域 -->
-    <div class="chat-history">
+    <div class="chat-history" ref="scrollContainer">
       <div
         v-for="(message, index) in chatMessages"
         :key="index"

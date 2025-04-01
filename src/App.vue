@@ -1,16 +1,13 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import { onUnmounted } from 'vue'
-import { useUserMessageStore } from '@/stores/UserMessage';
-const user=useUserMessageStore()
-onUnmounted(() => {// 组件销毁时清除消息
-  user.clearMessage()
-})
+import { NConfigProvider } from 'naive-ui';
 </script>
 
 <template>
-  <RouterView />
-</template>
+    <n-config-provider>
+      <RouterView />
+    </n-config-provider>
+  </template>
 
 <style scoped>
 
