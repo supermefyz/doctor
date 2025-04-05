@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { showToast } from "vant";
 import { NDataTable, NPagination } from "naive-ui";
 import { useRouter } from "vue-router";
 import config from "@/assets/json/config.json";
@@ -9,13 +8,14 @@ import axios from "axios";
 const router = useRouter();
 
 // 数据加载函数，添加search参数
-const loadData = (current_page, keyword = '') => {
+const loadData = (current_page, id = null, name = null) => {
   axios({
     url: `${config.url}/api/get_records`,
     method: "get",
     params: {
       page: current_page,
-      search: keyword // 确保后端支持搜索参数
+      id: id,
+      name: name
     }
   })
     .then((res) => {
@@ -25,7 +25,7 @@ const loadData = (current_page, keyword = '') => {
     })
     .catch((err) => {
       console.log(err);
-    });
+    })
 };
 
 onMounted(() => {
@@ -42,14 +42,15 @@ const pagination = ref({
 
 // 搜索功能改为触发后端请求
 const searchValue = ref("");
-const onSearch = () => {
-  loadData(1, searchValue.value.trim()); // 搜索时重置到第一页
-  showToast(searchValue.value ? `搜索: ${searchValue.value}` : "已重置");
-};
-
-// 分页变化处理
-const handlePageChange = (page) => {
-  loadData(page, searchValue.value.trim()); // 保持当前搜索条件
+const onSearch = (page) => {
+  const keyword = searchValue.value.trim();
+  if (keyword) {
+    if (/^\d+$/.test(keyword)) {
+      loadData(page, keyword);
+    } else {
+      loadData(page, null, keyword);
+    }
+  }
 };
 
 // 行点击事件保持不变
@@ -59,6 +60,10 @@ const onClick = (rowData) => {
 const goDetail = (row) => ({
   onClick: () => onClick(row),
 });
+const cancelSearch = () => {
+  searchValue.value = "";
+  loadData(1);
+};
 </script>
 
 <template>
@@ -67,10 +72,10 @@ const goDetail = (row) => ({
       v-model="searchValue"
       shape="round"
       show-action
-      clearable
       placeholder="请输入病人姓名或ID"
-      @search="onSearch"
-      @cancel="searchValue = ''"
+      @search="onSearch(1)"
+      @update:model-value="onSearch(1)"
+      @cancel="cancelSearch"
     />
 
     <div class="table-pagination-wrapper">
@@ -95,7 +100,7 @@ const goDetail = (row) => ({
           v-model:page="pagination.page"
           :item-count="pagination.totalItemCount"
           :page-size="pagination.pageSize"
-          @update:page="handlePageChange"
+          @update:page="onSearch"
         />
       </div>
     </div>

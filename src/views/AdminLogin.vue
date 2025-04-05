@@ -1,28 +1,27 @@
 <script setup>
+import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import axios from 'axios'
 import config from '@/assets/json/config.json'
-import { useRouter } from 'vue-router'
 import { showSuccessToast, showFailToast } from 'vant'
 const router = useRouter()
 const username = ref('')
 const password = ref('')
-const loginIn = () => {
-  console.log(username.value, password.value)
+const loginIn = () => { 
+  console.log(username.value, password.value);
   axios({
-    url: `${config.url}/doctor/login`,
+    url: `${config.url}/admin/login`,
     method: 'post',
     data: {
       username: username.value,
       password: password.value
     }
   }).then(res => {
-    console.log(res)
+    console.log(res);
     if (res.data.status === 200) {
+      router.push('/admin')
       console.log('登录成功')
       showSuccessToast('登录成功')
-      // 跳转到医生主页
-      router.push('/doctorSearch')
     } else {
       console.log('登录失败')
       showFailToast('登录失败')
@@ -35,11 +34,11 @@ const loginIn = () => {
 </script>
 <template>
 <div class="content">
-        <van-nav-bar
+            <van-nav-bar
       left-text="返回"
       left-arrow
       @click-left="$router.back()"
-      title="医生登录"
+      title="管理员登录"
     />
     <div class="login-container">
        <van-form @submit="loginIn">

@@ -8,7 +8,8 @@
         </div>
         <div class="button-container">
             <van-button type="primary" to="/userMessage">病人入口</van-button>
-            <van-button plain hairline type="success" to="/doctorSearch">医生入口</van-button>
+            <van-button plain hairline type="success" to="/doctorLogin">医生入口</van-button>
+            <van-button plain hairline type="warning" to="/adminLogin">管理员入口</van-button>
         </div>
     </div>
 </template>
@@ -53,7 +54,7 @@ p {
 /* 按钮容器样式 */
 .button-container {
     display: flex;
-    gap: 50px;
+    gap: 30px;
     justify-content: center;
     width: 100%;
     max-width: 400px;
