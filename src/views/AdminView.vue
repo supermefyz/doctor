@@ -13,7 +13,7 @@ const tabList = [
       title: '患者管理',
       name: 'Patient',
       icon: 'user-o',
-      path: '/admin/patient',
+      path: '/admin/patientManagement',
     },
     {
       title: '医生管理',

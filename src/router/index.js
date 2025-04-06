@@ -47,8 +47,8 @@ const router = createRouter({
           name: 'doctorManagement',
           component: Doctor,
         }, {
-          path: 'patient',
-          name: 'patient',
+          path: 'patientManagement',
+          name: 'patientManagement',
           component: Patient,
         }, {
           path: 'home',
