@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { Button, Form, Field, Cell, NavBar, Popup, Picker, SubmitBar, Loading, Toast, Search, CellGroup,Tab, Tabs } from 'vant'
+import { Button, Form, Field, Cell, NavBar, Popup, Picker, SubmitBar, Loading, Toast, Search, CellGroup, Tabbar, TabbarItem, Collapse, CollapseItem, Switch } from 'vant'
 import App from './App.vue'
 import router from './router'
 import 'vant/lib/index.css'
@@ -18,7 +18,11 @@ app.use(Button)
     .use(Toast)
     .use(Search)
     .use(CellGroup)
-    .use(Tab)
-    .use(Tabs)
+    .use(Tabbar)
+    .use(TabbarItem)
+    .use(Collapse)
+    .use(CollapseItem)
+    .use(Switch)
+
 
 app.mount('#app')

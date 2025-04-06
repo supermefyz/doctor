@@ -1,18 +1,36 @@
 <script setup>
+import { ref } from 'vue'
+import { RouterView } from 'vue-router'
+const active = ref("AdminHome");
+const tabList = [
+  {
+      title: '管理员主页',
+    name: 'AdminHome',
+      icon: 'home-o',
+      path: '/admin/home',
+    },
+    {
+      title: '患者管理',
+      name: 'Patient',
+      icon: 'user-o',
+      path: '/admin/patient',
+    },
+    {
+      title: '医生管理',
+      name: 'Doctor',
+      icon: 'friends-o',
+      path: '/admin/doctorManagement',
+    }
+  ];
 </script>
 <template>
 <div class="content">
-          <van-nav-bar
-      left-text="返回"
-      left-arrow
-      @click-left="$router.back()"
-      title="管理员主页"
-    />
-    <van-tabs v-model:active="active">
-  <van-tab v-for="index in 8" :title="'标签 ' + index">
-    内容 {{ index }}
-  </van-tab>
-</van-tabs>
+<router-view/>
+<van-tabbar v-model="active" :route="true">
+  <van-tabbar-item v-for="(item,index) in tabList" :key="index" :name="item.name" :icon="item.icon" :to="item.path">
+     {{ item.title }}
+  </van-tabbar-item> 
+</van-tabbar>
 </div>
 </template>
 <style scoped>

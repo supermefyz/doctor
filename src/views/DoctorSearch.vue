@@ -19,6 +19,8 @@ const loadData = (current_page, id = null, name = null) => {
     }
   })
     .then((res) => {
+      console.log(res.data);
+      
       rawData.value = res.data.records; // 直接使用后端返回的当前页数据
       pagination.value.page = res.data.current_page;
       pagination.value.totalItemCount = res.data.total; // 使用后端返回的总数
@@ -47,9 +49,12 @@ const onSearch = (page) => {
   if (keyword) {
     if (/^\d+$/.test(keyword)) {
       loadData(page, keyword);
-    } else {
+    } else if (/^[a-zA-Z\u4e00-\u9fa5]+$/.test(keyword)) {
       loadData(page, null, keyword);
-    }
+    }  
+    return
+  } else {
+      loadData(page);
   }
 };
 
@@ -100,7 +105,7 @@ const cancelSearch = () => {
           v-model:page="pagination.page"
           :item-count="pagination.totalItemCount"
           :page-size="pagination.pageSize"
-          @update:page="onSearch"
+          @update:page="page => onSearch(page)"
         />
       </div>
     </div>
