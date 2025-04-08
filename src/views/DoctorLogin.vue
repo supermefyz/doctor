@@ -45,7 +45,7 @@ const loginIn = () => {
         <van-nav-bar
       left-text="返回"
       left-arrow
-      @click-left="$router.back()"
+      @click-left="$router.push('/')"
       title="医生登录"
     />
     <div class="login-container">
