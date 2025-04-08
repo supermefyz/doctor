@@ -2,10 +2,12 @@
 import { ref ,onMounted} from 'vue'
 import { RouterView } from 'vue-router'
 import { useAdminStore } from '@/store/admin'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const adminStore = useAdminStore()
 onMounted(() => { 
   if (!adminStore.getAdminId) {
-    router.push('/admin/login')
+    router.push('/adminLogin')
   }
 })
 const active = ref("AdminHome");
