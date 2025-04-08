@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref , computed } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useChatMessageStore = defineStore('chatMessage', () => {
@@ -7,7 +7,19 @@ export const useChatMessageStore = defineStore('chatMessage', () => {
      * @type {ref<Array<Object>>}
      */
     const messages = ref([])
-    return {messages}
+    const isEmpty= computed(() => {
+        return messages.value.length === 0
+    })
+    const getMessageList = computed(() => {
+        return messages.value
+    })
+    const addMessage = (message) => {
+        messages.value.push(message)
+    }
+    const clearMessage = () => {
+        messages.value = []
+    }
+    return { isEmpty, addMessage, clearMessage, getMessageList }
 }, {
     persist: true// 持久化
 })

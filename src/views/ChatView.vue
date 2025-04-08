@@ -4,6 +4,8 @@ import config from "@/assets/json/config.json";
 import axios from "axios";
 import { showFailToast } from "vant";
 import { useRouter } from "vue-router";
+import { useChatMessageStore } from "@/store/chatMessage";
+const chatMessage = useChatMessageStore();
 const router = useRouter();
 // 聊天消息数组
 const chatMessages = ref([]);
@@ -13,25 +15,38 @@ const isLoading = ref(false);
 const scrollContainer = ref(null); // 容器引用
 const userAvatar = new URL("@/assets/img/User.png", import.meta.url).href;
 const doctorAvatar = new URL("@/assets/img/Doctor.png", import.meta.url).href;
+// 初始化时加载聊天记录
 onMounted(() => {
   // 加载聊天记录
-  chatMessages.value.push({
-    isUser: false,
-    content: "我是你的AI医生，有什么可以帮助你吗？",
-  });
+  if (chatMessage.isEmpty) {
+    const initMessage = {
+      isUser: false,
+      content: "我是你的AI医生，有什么可以帮助你吗？",
+    };
+    chatMessages.value.push(initMessage);
+    chatMessage.addMessage(initMessage);
+  } else {
+    chatMessages.value = chatMessage.getMessageList;
+  }
 });
+// 发送消息
 const sendMessage = async () => {
   isLoading.value = true; // 显示加载指示器
   if (inputMessage.value.trim()) {
-    // 添加用户消息到聊天记录
-    chatMessages.value.push({
+    // 构造用户消息对象
+    const message = {
       isUser: true,
       content: inputMessage.value,
-    });
+    };
+    // 添加用户消息到聊天记录
+    chatMessages.value.push(message);
+    // 保存聊天记录到本地
+    chatMessage.addMessage(message); 
+    // 清空输入框内容
     let temp = inputMessage.value;
     inputMessage.value = "";
-    console.log(temp);
     axios.defaults.withCredentials = true;
+    // 发送消息到后端
     axios({
       url: `${config.url}/api/chat`,
       method: "post",
@@ -48,10 +63,13 @@ const sendMessage = async () => {
           isUser: false,
           content: res.data.choices[0].message.content,
         };
+        // 保存聊天记录到本地
+        chatMessage.addMessage(aiMessage);
+        // 跳转到病人详情页
         if (res.data.choices[0].isOver) {
           console.log(res.data.choices[0].id);
           router.push({path:'/patient',query:{id:res.data.choices[0].id}})
-        } else {
+        } else {// 继续聊天
           chatMessages.value.push(aiMessage);
         }
       } else {
@@ -66,6 +84,7 @@ const sendMessage = async () => {
         content: "系统或网络错误，请稍后再试。",
       };
       chatMessages.value.push(errorMessage);
+      chatMessage.addMessage(errorMessage);
     });
   }
 };

@@ -4,7 +4,9 @@ import { NDataTable, NPagination } from "naive-ui";
 import { useRouter } from "vue-router";
 import config from "@/assets/json/config.json";
 import axios from "axios";
-
+import { useDoctorStore } from "@/store/doctor";
+import { showFailToast } from "vant";
+const doctorStore = useDoctorStore();
 const router = useRouter();
 
 // 数据加载函数，添加search参数
@@ -31,7 +33,14 @@ const loadData = (current_page, id = null, name = null) => {
 };
 
 onMounted(() => {
-  loadData(1);
+  if (doctorStore.getDoctorId) {
+    // 已登录，加载数据
+    loadData(1);
+  } else {
+    // 未登录，跳转到登录页
+    router.push("/doctorLogin");
+    
+  }
 });
 
 const rawData = ref([]); // 存储当前页数据
@@ -60,7 +69,11 @@ const onSearch = (page) => {
 
 // 行点击事件保持不变
 const onClick = (rowData) => {
-  router.push({ path: "/doctor", query: { id: rowData.id } });
+  if (doctorStore.doctorStatus) {
+    router.push({ path: "/doctor", query: { id: rowData.id } });
+  } else {
+    showFailToast("您没有权限查看此病历");
+  }
 };
 const goDetail = (row) => ({
   onClick: () => onClick(row),

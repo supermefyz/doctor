@@ -1,12 +1,18 @@
 <script setup>
-import { ref } from 'vue'
+import { ref,onMounted } from 'vue'
 import axios from 'axios'
 import config from '@/assets/json/config.json'
 import { useRouter } from 'vue-router'
 import { showSuccessToast, showFailToast } from 'vant'
+import { useDoctorStore } from '@/store/doctor'
+const doctorStore = useDoctorStore()
 const router = useRouter()
 const username = ref('')
 const password = ref('')
+// 页面加载完成后清空医生信息
+onMounted(() => {
+  doctorStore.clearDoctor()
+})
 const loginIn = () => {
   console.log(username.value, password.value)
   axios({
@@ -19,6 +25,7 @@ const loginIn = () => {
   }).then(res => {
     console.log(res)
     if (res.data.status === 200) {
+      doctorStore.setDoctor(res.data.data)
       console.log('登录成功')
       showSuccessToast('登录成功')
       // 跳转到医生主页
