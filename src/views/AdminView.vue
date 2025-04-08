@@ -1,6 +1,13 @@
 <script setup>
-import { ref } from 'vue'
+import { ref ,onMounted} from 'vue'
 import { RouterView } from 'vue-router'
+import { useAdminStore } from '@/store/admin'
+const adminStore = useAdminStore()
+onMounted(() => { 
+  if (!adminStore.getAdminId) {
+    router.push('/admin/login')
+  }
+})
 const active = ref("AdminHome");
 const tabList = [
   {
