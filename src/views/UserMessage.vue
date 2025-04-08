@@ -89,7 +89,7 @@ const onReset = () => showConfirmDialog({
     <van-nav-bar
       left-text="返回"
       left-arrow
-      @click-left="$router.back()"
+      @click-left="$router.push('/')"
       title="用户信息表单"
     />
     <div class="form">

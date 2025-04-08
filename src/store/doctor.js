@@ -13,15 +13,11 @@ export const useDoctorStore = defineStore('doctor', () => {
     const doctorStatus = computed(() => {
         return doctor.value.status
     })
-    // 设置医生信息
-    const setDoctor = (data) => {
-        doctor.value = data
-    }
     // 清空医生信息
     const clearDoctor = () => {
         doctor.value = {}
     }
-    return { getDoctorId, doctorStatus, setDoctor, clearDoctor }
+    return { doctor,getDoctorId, doctorStatus, clearDoctor }
 }, {
     persist: true // 持久化
 })

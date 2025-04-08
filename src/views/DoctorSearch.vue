@@ -33,15 +33,19 @@ const loadData = (current_page, id = null, name = null) => {
 };
 
 onMounted(() => {
-  if (doctorStore.getDoctorId) {
+  console.log(doctorStore.getDoctorId);
+});
+ if (doctorStore.getDoctorId) {
+    console.log("已登录");
+    
     // 已登录，加载数据
     loadData(1);
   } else {
+    console.log("未登录");
     // 未登录，跳转到登录页
     router.push("/doctorLogin");
     
   }
-});
 
 const rawData = ref([]); // 存储当前页数据
 

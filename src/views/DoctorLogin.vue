@@ -14,7 +14,6 @@ onMounted(() => {
   doctorStore.clearDoctor()
 })
 const loginIn = () => {
-  console.log(username.value, password.value)
   axios({
     url: `${config.url}/doctor/login`,
     method: 'post',
@@ -25,7 +24,7 @@ const loginIn = () => {
   }).then(res => {
     console.log(res)
     if (res.data.status === 200) {
-      doctorStore.setDoctor(res.data.data)
+      doctorStore.doctor=res.data.data
       console.log('登录成功')
       showSuccessToast('登录成功')
       // 跳转到医生主页
