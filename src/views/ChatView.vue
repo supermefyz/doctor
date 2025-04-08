@@ -24,7 +24,7 @@ onMounted(() => {
       content: "我是你的AI医生，有什么可以帮助你吗？",
     };
     chatMessages.value.push(initMessage);
-    chatMessage.addMessage(initMessage);
+    chatMessage.messages=chatMessages.value;
   } else {
     chatMessages.value = chatMessage.getMessageList;
   }
@@ -41,7 +41,7 @@ const sendMessage = async () => {
     // 添加用户消息到聊天记录
     chatMessages.value.push(message);
     // 保存聊天记录到本地
-    chatMessage.addMessage(message); 
+    chatMessage.messages=chatMessages.value; 
     // 清空输入框内容
     let temp = inputMessage.value;
     inputMessage.value = "";
@@ -63,14 +63,13 @@ const sendMessage = async () => {
           isUser: false,
           content: res.data.choices[0].message.content,
         };
-        // 保存聊天记录到本地
-        chatMessage.addMessage(aiMessage);
         // 跳转到病人详情页
         if (res.data.choices[0].isOver) {
           console.log(res.data.choices[0].id);
           router.push({path:'/patient',query:{id:res.data.choices[0].id}})
         } else {// 继续聊天
           chatMessages.value.push(aiMessage);
+          chatMessage.messages = chatMessages.value;
         }
       } else {
         console.error(res.error);
@@ -84,7 +83,7 @@ const sendMessage = async () => {
         content: "系统或网络错误，请稍后再试。",
       };
       chatMessages.value.push(errorMessage);
-      chatMessage.addMessage(errorMessage);
+      chatMessage.messages=chatMessages.value;
     });
   }
 };

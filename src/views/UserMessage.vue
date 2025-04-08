@@ -1,9 +1,11 @@
 <script setup>
-import { ref } from "vue";
+import { ref ,onMounted} from "vue";
 import { showConfirmDialog } from 'vant';
 import config from "@/assets/json/config.json";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { useChatMessageStore } from "@/store/chatMessage";
+const chatMessage = useChatMessageStore();
 const router = useRouter();
 const loadings = ref(false);
 const showPicker = ref(false);
@@ -26,6 +28,11 @@ const columns = [
     value: "女",
   },
 ];
+onMounted(() => {
+  if (!chatMessage.isEmpty) {
+    router.push("/chat");
+  }
+})
 const onConfirm = ({ selectedOptions }) => {
   form.value.gender = selectedOptions[0]?.text;
   showPicker.value = false;
