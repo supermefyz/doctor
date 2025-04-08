@@ -21,8 +21,6 @@ const loadData = (current_page, id = null, name = null) => {
     }
   })
     .then((res) => {
-      console.log(res.data);
-      
       rawData.value = res.data.records; // 直接使用后端返回的当前页数据
       pagination.value.page = res.data.current_page;
       pagination.value.totalItemCount = res.data.total; // 使用后端返回的总数
@@ -76,7 +74,7 @@ const onClick = (rowData) => {
   if (doctorStore.doctorStatus) {
     router.push({ path: "/doctor", query: { id: rowData.id } });
   } else {
-    showFailToast("您没有权限查看此病历");
+    showFailToast("您没有权限查看病历");
   }
 };
 const goDetail = (row) => ({
