@@ -30,12 +30,7 @@ const loadData = (current_page, id = null, name = null) => {
     })
 };
 
-onMounted(() => {
-  console.log(doctorStore.getDoctorId);
-});
  if (doctorStore.getDoctorId) {
-    console.log("已登录");
-    
     // 已登录，加载数据
     loadData(1);
   } else {
