@@ -1,15 +1,15 @@
 <script setup>
 import { NQrCode,NDescriptions, NDescriptionsItem } from "naive-ui";
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-const route = useRoute();
+import { useRoute,useRouter } from "vue-router";
 import axios from "axios";
 import config from "@/assets/json/config.json";
-
+const route = useRoute();
+const router = useRouter()
 const id = route.query.id;
 const url = `${config.localhost}/doctor?id=${id}`
 onMounted(() => {
-console.log(id);
+  console.log(id);
   axios({
     url: `${config.url}/api/get_record_by_id`,
     method: "get",
@@ -20,6 +20,7 @@ console.log(id);
     message.value = res.data;
   }).catch(err => {
     console.log(err);
+    router.back()
   });
 });
 const message = ref({

@@ -109,7 +109,7 @@ onMounted(scrollToBottom);
     <van-nav-bar
       left-text="返回"
       left-arrow
-      @click-left="$router.back()"
+      @click-left="$router.push('/')"
       title="AIChat"
     />
     <!-- 聊天记录展示区域 -->

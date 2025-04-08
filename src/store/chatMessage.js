@@ -7,6 +7,7 @@ export const useChatMessageStore = defineStore('chatMessage', () => {
      * @type {ref<Array<Object>>}
      */
     const messages = ref([])
+    const id=ref(-1)
     const isEmpty= computed(() => {
         return messages.value.length === 0
     })
@@ -19,7 +20,7 @@ export const useChatMessageStore = defineStore('chatMessage', () => {
     const clearMessage = () => {
         messages.value = []
     }
-    return { isEmpty, addMessage, clearMessage, getMessageList, messages }
+    return { isEmpty, addMessage, clearMessage, getMessageList, messages,id }
 }, {
     persist: true// 持久化
 })

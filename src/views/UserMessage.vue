@@ -55,6 +55,7 @@ const onSubmit = () => {
     }).then((res) => {
       if (res.status === 200) {
         console.log(res.data.message);
+        chatMessage.id=res.data.id
         loadings.value = false;
         router.push("/chat");
       } else {
