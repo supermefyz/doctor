@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { Button, Form, Field, Cell, NavBar, Popup, Picker, SubmitBar, Loading, Toast, Search, CellGroup, Tabbar, TabbarItem, Collapse, CollapseItem, Switch } from 'vant'
+import { Button, Form, Field, Cell, NavBar, Popup, Picker, SubmitBar, Loading, Toast, Search, CellGroup, Tabbar, TabbarItem, Collapse, CollapseItem, Switch,Tab,Tabs } from 'vant'
 import App from './App.vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
@@ -27,6 +27,8 @@ app.use(Button)
     .use(Collapse)
     .use(CollapseItem)
     .use(Switch)
+    .use(Tab)
+    .use(Tabs)
 
 
 app.mount('#app')

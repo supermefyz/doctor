@@ -13,7 +13,7 @@ export default defineConfig({
         }
       }
     }),
-    // vueDevTools(),
+    vueDevTools(),
   ],
   resolve: {
     alias: {
@@ -35,7 +35,7 @@ export default defineConfig({
   // },
   // proxy: {
   //   '/api': {
-  //     target: 'https://463c0616.r9.cpolar.top',
+  //     target: 'http://192.168.1.115:5000',
   //     changeOrigin: true,
   //     rewrite: (path) => path.replace(/^\/api/, '')
   //   }

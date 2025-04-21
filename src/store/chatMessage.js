@@ -20,7 +20,10 @@ export const useChatMessageStore = defineStore('chatMessage', () => {
     const clearMessage = () => {
         messages.value = []
     }
-    return { isEmpty, addMessage, clearMessage, getMessageList, messages,id }
+    const clearId = () => {
+        id.value = -1
+    }
+    return { isEmpty, addMessage, clearMessage, getMessageList, messages,id,clearId }
 }, {
     persist: true// 持久化
 })

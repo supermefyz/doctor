@@ -2,7 +2,7 @@
 import { ref, onMounted, watch, nextTick } from "vue";
 import config from "@/assets/json/config.json";
 import axios from "axios";
-import { showFailToast } from "vant";
+import { showFailToast, showSuccessToast } from "vant";
 import { useRouter } from "vue-router";
 import { useChatMessageStore } from "@/store/chatMessage";
 const chatMessage = useChatMessageStore();
@@ -66,6 +66,18 @@ const sendMessage = async () => {
         // 跳转到病人详情页
         if (res.data.choices[0].isOver) {
           console.log(res.data.choices[0].id);
+          axios({
+            url: `${config.url}/api/save_memory`,
+            method: "post",
+            data: {
+              user_id: res.data.choices[0].id,
+              chat_history:chatMessages.value
+            },
+          }).then(resp => { 
+            console.log(resp);
+          }).catch(err => {
+            console.error(err);
+          });
           router.push({path:'/patient',query:{id:res.data.choices[0].id}})
         } else {// 继续聊天
           chatMessages.value.push(aiMessage);
@@ -86,6 +98,8 @@ const sendMessage = async () => {
       chatMessage.messages=chatMessages.value;
     });
   }
+  console.log(chatMessages.value);
+  
 };
 // 滚动到底部的函数
 const scrollToBottom = () => {
@@ -102,14 +116,38 @@ watch(
 
 // 初始化时滚动到底部
 onMounted(scrollToBottom);
+
+const restartChat = () => {
+  axios({
+    url: `${config.url}/api/chat_recount`,
+    method: "get",
+    params: {
+      reset:true
+    }
+  }).then(res=>{
+    console.log(res.message);
+    chatMessage.clearMessage();
+    showSuccessToast(res.message);
+  }).catch(err=>{
+    console.error(err);
+    showFailToast(err.message);
+  })
+  router.go(0);
+}
+const resetRole= () => {
+  chatMessage.clearId();
+  chatMessage.clearMessage();
+  router.push({ path: "/userMessage" });
+}
 </script>
 <template>
   <div class="chat-container">
     <!-- 导航栏 -->
     <van-nav-bar
-      left-text="返回"
-      left-arrow
-      @click-left="$router.push('/')"
+      left-text="重置个人信息"
+      right-text="开启新会话"
+      @click-right="restartChat"
+      @click-left="resetRole"
       title="AIChat"
     />
     <!-- 聊天记录展示区域 -->

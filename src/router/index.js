@@ -60,8 +60,11 @@ const router = createRouter({
       path: '/adminLogin',
       name: 'adminLogin',
       component: () => import('@/views/AdminLogin.vue'),
+    }, {
+      path: '/history',
+      name: 'history',
+      component: () => import('@/views/PatientHistory.vue'),
     }
   ],
 })
-
 export default router

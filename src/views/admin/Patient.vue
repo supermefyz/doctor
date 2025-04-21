@@ -163,10 +163,8 @@ medical_history" label="病史" readonly></van-field>
         <van-field v-model="message.suggestion" label="建议" type="textarea" readonly></van-field>
     </van-cell>
     <van-cell>
-        <span style="margin-right: 70px;">
-            {{message.time  }}
-        </span>
-        <van-button type="primary" @click="show = false" style="margin-top: 10px">取消</van-button>
+        <van-button type="primary" @click="show = false;$router.push({ path: '/history', query: { id: message.id , name: message.name } })" style="margin-top: 10px">历史记录</van-button>
+        <van-button type="primary" @click="show = false" style="margin-top: 10px;margin-left: 10px;">取消</van-button>
         <van-button type="success" @click="show = false;deleteRecord(message.id)" style="margin-left: 10px;margin-top: 10px">删除</van-button>
     </van-cell>
   </van-popup>
