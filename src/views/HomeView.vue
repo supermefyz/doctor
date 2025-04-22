@@ -3,7 +3,7 @@
 <template>
     <div class="background">
         <div class="title">
-            <h2>AI心血管导诊医生小程序</h2>
+            <h2>医智健康</h2>
             <p>医疗信息化平台</p>
         </div>
         <div class="button-container">

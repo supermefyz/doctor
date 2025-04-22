@@ -131,8 +131,10 @@ const restartChat = () => {
   }).catch(err=>{
     console.error(err);
     showFailToast(err.message);
-  })
-  router.go(0);
+  }).finally(() => { 
+    // 重置路由
+    router.go(0);
+  });
 }
 const resetRole= () => {
   chatMessage.clearId();
@@ -178,12 +180,14 @@ const resetRole= () => {
         v-model="inputMessage"
         placeholder="请输入你要发送的消息"
         @keydown.enter="sendMessage"
+         :disabled="isLoading"
         style="width: 90%"
       />
       <van-button
         type="primary"
         @click="sendMessage"
         style="min-width: 1rem; white-space: nowrap"
+        :disabled="isLoading"
       >发送</van-button>
     </div>
   </div>
