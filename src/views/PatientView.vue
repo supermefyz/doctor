@@ -54,7 +54,16 @@ const message = ref({
       }}</p></n-descriptions-item>
     </n-descriptions>
     <div class="time">
-      {{ message.time }}
+     <van-button 
+     color="linear-gradient(to right, #ff6034, #ee0a24)"
+     @click="$router.push('/tongueDiagnosis?id='+id)"
+     >
+  舌苔辅助诊断
+</van-button>
+      <span>
+        {{ message.time }}
+      </span>
+
     </div>
     <center><n-qr-code :value="url" /></center>
   </div>

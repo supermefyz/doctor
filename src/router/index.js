@@ -64,6 +64,10 @@ const router = createRouter({
       path: '/history',
       name: 'history',
       component: () => import('@/views/PatientHistory.vue'),
+    },{
+      path: '/tongueDiagnosis',
+      name: 'tongueDiagnosis',
+      component: () => import('@/views/TongueDiagnosis.vue'),
     }
   ],
 })
